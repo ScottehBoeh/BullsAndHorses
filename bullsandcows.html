@@ -1,0 +1,182 @@
+<html>
+
+<head>
+    <title>Add title Here !</title>
+    <script>
+        // Function isplit takes an integer variable and splits it into
+        // a four element array by repeated modulus and division operations
+        // uses parseInt to round - could also use Math.floor()
+        // ( remember to add 0.5)
+        //
+        // Writen by Walter Plinge 29/2/2014
+        //
+        function isplit(x) {
+            var local = x;
+            var nums = [];
+            //var colvalue = 10;
+            for (var i = 0; i < 4; i++) {
+                //nums[i]=local % colvalue;
+                //local = local /colvalue;
+                //colvalue*=10;
+                nums[i] = local % 10;
+                local = parseInt(local / 10);
+            }
+            return nums;
+        }
+
+        // function different takes an array of four numbers and builds
+        // a histogram of frequency of appearance of each number.
+        // If any slot in the histogram is greater than one, then there is a
+        // duplicate and the function returns false. If all of the values are
+        // different, then the function returns true
+        //
+        // Writen by Walter Plinge 29/2/2014
+        //
+        function different(nums) {
+            hist = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            flag = true;
+            for (var i = 0; i < nums.length; i++)
+                hist[nums[i]] = hist[nums[i]] + 1; //hist[nums[i]]++
+            for (var i = 0; i < 10; i++)
+                if (hist[i] > 1)
+                    flag = false;
+            return flag;
+        }
+
+        // function show displays the contents of the array nums separated by
+        // spaces on a line. The truth value passed as nl dtermines if a new
+        // line is issued after the values have been printed
+        //
+        // Writen by Walter Plinge 29/2/2014
+        //
+        function show(nums, nl) {
+            for (var i = 0; i < nums.length; i++)
+                document.write(nums[i], "&nbsp;");
+            if (nl) document.write("<br>");
+        }
+
+        // function bulls returns the number of exact matches - the right
+        // number in the right place
+        //
+        // Writen by Walter Plinge 29/2/2014
+        //
+        function bulls(guess, number) {
+            var matches = 0;
+            a_guess = isplit(guess);
+            a_number = isplit(number);
+            for (var i = 0; i < a_guess.length; i++) /////////// ????????? guess.length ?
+                if (a_guess[i] == a_number[i])
+                    matches++;
+            return matches;
+        }
+
+        // function cows returns the number of near matches - the right
+        // number in the wrong place
+        //
+        // Writen by Walter Plinge 29/2/2014
+        //
+        function cows(guess, number) {
+            var matches = 0;
+            a_guess = isplit(guess);
+            a_number = isplit(number);
+            for (var i = 0; i < a_guess.length; i++) {
+                for (var j = 0; j < a_number.length; j++) {
+                    if (i != j) {
+                        if (a_guess[i] == a_number[j])
+                            matches++;
+                    }
+                }
+            }
+            return matches;
+        }
+    </script>
+</head>
+
+<body>
+    <script>
+        var poss = []; // set up an array to hold all of the possibilities
+        var found = false;
+        var guess = 0;
+        var cheat = false;
+        var b = 0;
+        var c = 0;
+        
+        var the_answer=0;
+        
+        if(typeof(Storage) !== "undefined") {
+          // Code for localStorage/sessionStorage.
+          document.write("Local Storage enabled <br>");
+        } else {
+             document.write("Mo Local Storage <br>");
+        // Sorry! No Web Storage support..
+}
+
+        // initialise the array of possibilities
+
+        for (var i = 0; i < 10000; i++) {
+            poss[i] = 1; // a value of 1 means it has not yet been eliminated
+            if (!different(isplit(i)))
+                poss[i] = 0; // eliminate any number with duplicates
+        }
+
+
+        document.write(" Think of a number between 0123 and 9876 ");
+        document.write(" (without any duplicates) <BR> This construct will attempt to ");
+        document.write(" guess the number. <BR> You will have to provide the number of ");
+        document.write(" bulls and cows scored");
+
+        the_answer=prompt("for testing, please tell me the answer");
+        
+        // start the guessing loop
+
+        while (!found) {
+            // get guess - just go with the lowest possible number remaining
+            //guess = 123;
+            guess = 0;
+            while (poss[guess] == 0) {
+                guess++;
+                if (guess > 10000) {
+                    cheat = true;
+                    found = false;
+                    break;
+                }
+            }
+            document.write("&gt;&gt; Bulls ",bulls(the_answer,guess));
+            document.write("&gt;&gt; Cows ",cows(the_answer,guess),"<br>");
+            document.write("<br> My guess is <br>", guess, " How did I do ? <br> ");
+            b = prompt("Bulls ( 0 to 4 ) "); // really should validate this !
+            document.write("That's ", b, " bulls. ");
+
+
+            if (b == 4)
+                found = true;
+            else {
+                c = prompt("Cows ( 0 to 4 ) "); // really should validate this !
+                document.write(" ", c, " Cows <br>");
+                // eliminate all those that could not possibly match
+                //poss[guess]=0;
+                for (var i = 0; i < 10000; i++) {
+                    if (poss[i] == 1) // still possible
+                    {
+                        //document.write(i,"&nbsp; -- &gt;&nbsp;");
+                        if (b != bulls(i, guess)) poss[i] = 0;
+                        //document.write(bulls(isplit(i),isplit(guess)),"##");
+                        //show(isplit(i),false);document.write("&nbsp",b,"&nbsp;",c,"&nbsp");show(isplit(guess),true);
+                        //document.write(b,"++&nbsp:");
+                        //show(isplit(i),false);
+                        //document.write(b,"&nbsp:++");//document.write("&lt;<br>");
+                        if (c != cows(i, guess)) poss[i] = 0;
+                    }
+                }
+            }
+        }
+
+        if (cheat)
+            document.write("something went wrong there - are you sure you put the numbers in right ?<br>");
+        else
+            document.write("Got it !<br>");
+    </script>
+    </script>
+</body>
+
+</html>
