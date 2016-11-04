@@ -3,7 +3,7 @@
 <head>
     <title>Add title Here !</title>
     <script>
-        function pad (str, max) {
+	    function pad (str, max) {
 			str = str.toString();
 			return str.length < max ? pad("0" + str, max) : str;
 		}
@@ -116,9 +116,9 @@
 }
 
         // initialise the array of possibilities
-        
+
 		//FIX LINES: Changed 10000 to 9876
-        for (var i = 0; i < 9876; i++) {
+        for (var i = 0; i < 10001; i++) {
             poss[i] = 1; // a value of 1 means it has not yet been eliminated
             if (!different(isplit(i)))
                 poss[i] = 0; // eliminate any number with duplicates
@@ -140,29 +140,31 @@
             guess = 0;
             while (poss[guess] == 0) {
                 guess++;
-				//FIXED LINES: changed 10,000 to 9876
-                if (guess > 9876) {
+				//FIXED LINES: Changed from More-than to Equal-To or More-than 10,000
+                if (guess >= 10000) {
                     cheat = true;
                     found = false;
                     break;
                 }
             }
-            
-            //FIXED LINES: added "0" to end of Intial Value
-			    guess = guess.toString();
-			    guess = guess.length < 4 ? pad("0" + guess, 4) : guess;
+			
+			//FIXED LINES: added "0" to end of Intial Value
+			guess = guess.toString();
+			guess = guess.length < 4 ? pad("0" + guess, 4) : guess;
 			//END OF FIX
-            
+			
             document.write("&gt;&gt; Bulls ",bulls(the_answer,guess));
             document.write("&gt;&gt; Cows ",cows(the_answer,guess),"<br>");
             document.write("<br> My guess is <br>", guess, " How did I do ? <br> ");
-            b = prompt("Bulls ( 0 to 4 ) "); // really should validate this !
             document.write("That's ", b, " bulls. ");
 
 
             if (b == 4)
                 found = true;
             else {
+				if (cheat == true){
+				break;}
+				b = prompt("Bulls ( 0 to 4 ) "); // really should validate this !
                 c = prompt("Cows ( 0 to 4 ) "); // really should validate this !
                 document.write(" ", c, " Cows <br>");
                 // eliminate all those that could not possibly match
@@ -183,7 +185,7 @@
             }
         }
 
-        if (cheat)
+        if (cheat == true)
             document.write("something went wrong there - are you sure you put the numbers in right ?<br>");
         else
             document.write("Got it !<br>");
