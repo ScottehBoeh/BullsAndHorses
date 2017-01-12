@@ -1,4 +1,4 @@
-# BullsAndHorses
+# Bulls n' Coo's
 School Project/Assessment
 
 Scenario:
